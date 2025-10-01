@@ -20,6 +20,7 @@ interface AppContextType {
     t: (key: string, section?: string) => string;
     schedule: Schedule;
     updateSchedule: (userId: string, date: string, locationId: LocationId) => void;
+    refreshData: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -32,6 +33,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const [language, setLanguage] = useLocalStorage<Language>('language', 'nl');
     const [schedule, setSchedule] = useState<Schedule>({});
     
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const members = await api.fetchTeamMembers();
+            setTeamMembers(members);
+            const initialSchedule = await api.fetchSchedule(members);
+            setSchedule(initialSchedule);
+        } catch (error) {
+            console.error("Error: failed to refresh data", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     useEffect(() => {
         const root = window.document.documentElement;
         root.classList.remove('light', 'dark');
@@ -44,14 +58,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             setUser(authUser);
             if (authUser) {
                 // When a user logs in, fetch all team & schedule data
-                const fetchData = async () => {
-                    setIsLoading(true);
-                    const members = await api.fetchTeamMembers();
-                    setTeamMembers(members);
-                    const initialSchedule = await api.fetchSchedule(members);
-                    setSchedule(initialSchedule);
-                    setIsLoading(false);
-                };
                 fetchData();
             } else {
                 // User is logged out, clear data and stop loading
@@ -104,7 +110,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setLanguage, 
         t, 
         schedule, 
-        updateSchedule 
+        updateSchedule,
+        refreshData: fetchData,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

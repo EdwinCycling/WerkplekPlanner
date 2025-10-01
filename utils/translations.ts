@@ -40,6 +40,7 @@ export const translations = {
         pwaMobileInstructionsTitle: "How to install on mobile",
         pwaMobileInstructionsText: "On iPhone/iPad (Safari): Tap the Share icon, then 'Add to Home Screen'. On Android (Chrome): Use the install prompt when available.",
         dismiss: "Dismiss",
+        refresh: "Refresh",
         dayNames: {
             monday: "Monday",
             tuesday: "Tuesday",
@@ -107,6 +108,7 @@ export const translations = {
         pwaMobileInstructionsTitle: "Zo installeer je op mobiel",
         pwaMobileInstructionsText: "Op iPhone/iPad (Safari): Tik op het Deel-icoon en kies 'Zet op beginscherm'. Op Android (Chrome): Gebruik de install prompt wanneer beschikbaar.",
         dismiss: "Sluiten",
+        refresh: "Verversen",
         dayNames: {
             monday: "Maandag",
             tuesday: "Dinsdag",
