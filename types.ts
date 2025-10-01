@@ -1,4 +1,4 @@
-export type LocationId = 'home' | 'delft' | 'eindhoven' | 'gent' | 'utrecht' | 'zwolle' | 'other' | 'off' | 'scheduled_off' | 'event';
+export type LocationId = 'home' | 'delft' | 'eindhoven' | 'gent' | 'utrecht' | 'zwolle' | 'other' | 'off' | 'scheduled_off' | 'event' | 'holiday';
 
 export interface Location {
     id: LocationId;

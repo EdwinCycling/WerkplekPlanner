@@ -58,7 +58,8 @@ export const translations = {
             other: "Other location",
             off: "Off",
             scheduled_off: "Scheduled Day Off",
-            event: "Event/Fair/Training"
+            event: "Event/Fair/Training",
+            holiday: "Holiday"
         },
         cookieConsentTitle: "We use cookies",
         cookieConsentText: "This site uses cookies to store your preferences like language, theme, and username for a better experience. By continuing, you agree to our use of these essential cookies.",
@@ -86,6 +87,10 @@ export const translations = {
         confirmNewPasswordLabel: "Confirm new password",
         passwordsDoNotMatch: "Passwords do not match.",
         tooManyAttempts: "Too many failed login attempts. Please try again later.",
+        vacationPlanner: "Vacation Planner",
+        vacationPlannerSubtitle: "Plan time off in a monthly calendar",
+        previousMonth: "Previous Month",
+        nextMonth: "Next Month",
     },
     nl: {
         loginSubtitle: "Log in om je teamplanning te beheren.",
@@ -146,7 +151,8 @@ export const translations = {
             other: "Andere locatie",
             off: "Vrij",
             scheduled_off: "Roostervij",
-            event: "Event/beurs/training"
+            event: "Event/beurs/training",
+            holiday: "Feestdag"
         },
         cookieConsentTitle: "Wij gebruiken cookies",
         cookieConsentText: "Deze site gebruikt cookies om uw voorkeuren zoals taal, thema en gebruikersnaam op te slaan voor een betere ervaring. Door verder te gaan, gaat u akkoord met ons gebruik van deze essentiële cookies.",
@@ -155,8 +161,22 @@ export const translations = {
         cookiePolicyTitle: "Cookiebeleid",
         cookiePolicyText: "We gebruiken 'local storage' in uw browser om essentiële voorkeuren op te slaan om uw gebruikerservaring te verbeteren. Dit omvat:\n\n- Taalvoorkeur (Engels of Nederlands)\n- Themapvoorkeur (Licht of Donker)\n- Uw gebruikersnaam voor snelle login\n- Uw toestemming voor dit cookiebeleid\n\nWe gebruiken geen tracking of analytics cookies.",
         close: "Sluiten",
+        changePasswordTitle: "Wachtwoord veranderen",
+        newPasswordLabel: "Nieuw wachtwoord",
+        savePasswordButton: "Opslaan",
+        passwordTooShort: "Wachtwoord moet minimaal 8 tekens lang zijn.",
+        passwordStrength: "Wachtwoordsterkte",
+        weak: "Zwak",
+        medium: "Gemiddeld",
+        strong: "Sterk",
+        passwordUpdated: "Wachtwoord succesvol bijgewerkt.",
+        passwordUpdateError: "Bijwerken van wachtwoord is mislukt. Probeer het opnieuw.",
         confirmNewPasswordLabel: "Bevestig nieuw wachtwoord",
         passwordsDoNotMatch: "Wachtwoorden komen niet overeen.",
         tooManyAttempts: "Te veel mislukte inlogpogingen. Probeer het later opnieuw.",
+        vacationPlanner: "Vakantieplanner",
+        vacationPlannerSubtitle: "Plan vrije dagen in een maandkalender",
+        previousMonth: "Vorige maand",
+        nextMonth: "Volgende maand",
     },
 };

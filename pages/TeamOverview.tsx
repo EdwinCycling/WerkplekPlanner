@@ -12,11 +12,15 @@ const TeamOverview: React.FC = () => {
     const weekNum = getWeekNumber(currentDate, language);
     const dayNames = [t('monday', 'dayNames'), t('tuesday', 'dayNames'), t('wednesday', 'dayNames'), t('thursday', 'dayNames'), t('friday', 'dayNames')];
 
+    const sortedTeamMembers = [...teamMembers].sort((a, b) =>
+        getUserDisplayName(a).localeCompare(getUserDisplayName(b), undefined, { sensitivity: 'base' })
+    );
+
     const copyToClipboard = () => {
         let text = `${t('teamOverviewTitle')} - ${t('week')} ${weekNum}\n\n`;
         text += `\t${workdays.map(d => formatDate(d, 'eee dd/MM', language)).join('\t')}\n`;
         
-        teamMembers.forEach(user => {
+        sortedTeamMembers.forEach(user => {
             text += `${getUserDisplayName(user)}\t`;
             text += workdays.map(day => {
                 const dateStr = formatDate(day, 'yyyy-MM-dd');
@@ -73,7 +77,7 @@ const TeamOverview: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {teamMembers.map(user => (
+                        {sortedTeamMembers.map(user => (
                              <tr key={user.id} className="border-b border-gray-200 dark:border-gray-700">
                                 <td className="p-3 font-medium text-gray-900 dark:text-gray-100">{getUserDisplayName(user)}</td>
                                 {workdays.map(day => {

@@ -12,4 +12,5 @@ export const LOCATIONS: Location[] = [
     { id: 'off', nameKey: 'off', color: 'bg-gray-400 dark:bg-gray-600', textColor: 'text-white' },
     { id: 'scheduled_off', nameKey: 'scheduled_off', color: 'bg-gray-500 dark:bg-gray-700', textColor: 'text-white' },
     { id: 'event', nameKey: 'event', color: 'bg-pink-500', textColor: 'text-white' },
+    { id: 'holiday', nameKey: 'holiday', color: 'bg-indigo-500', textColor: 'text-white' },
 ];

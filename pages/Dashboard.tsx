@@ -5,7 +5,7 @@ import { User } from '../types';
 import { formatDate, addWorkday, subWorkday, getUserDisplayName, getRelativeDayName, getStartOfWeek, subWeeks, addWeeks, addDays, getWorkdaysOfWeek, startOfDay, getDutchHolidays } from '../utils/dateUtils';
 
 interface DashboardProps {
-    setPage: (page: 'dashboard' | 'set-workplace' | 'team-overview') => void;
+    setPage: (page: 'dashboard' | 'set-workplace' | 'team-overview' | 'vacation-planner') => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
@@ -15,6 +15,11 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
     const dateString = formatDate(currentDate, 'yyyy-MM-dd');
     const displayDate = getRelativeDayName(currentDate, language, (key) => t(key));
 
+    const sortedTeamMembers = useMemo(() => {
+        return [...teamMembers].sort((a, b) =>
+            getUserDisplayName(a).localeCompare(getUserDisplayName(b), undefined, { sensitivity: 'base' })
+        );
+    }, [teamMembers]);
     const today = startOfDay(new Date());
     const startOfThisWeek = getStartOfWeek(today);
     const endOfNextWeek = addDays(getStartOfWeek(addWeeks(today, 1)), 4);
@@ -72,26 +77,33 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
 
     return (
         <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <button
                     onClick={() => setPage('set-workplace')}
-                    className="p-8 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-blue-100 dark:ring-blue-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
+                    className="p-6 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-blue-100 dark:ring-blue-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
                 >
-                    <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
                         {t('setWorkplace')}
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" /></svg>
                     </h2>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2">{t('setWorkplaceSubtitle')}</p>
                 </button>
                 <button
                     onClick={() => setPage('team-overview')}
-                    className="p-8 bg-gradient-to-br from-white to-green-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-green-100 dark:ring-green-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
+                    className="p-6 bg-gradient-to-br from-white to-green-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-green-100 dark:ring-green-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
                 >
-                    <h2 className="text-2xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2">
                         {t('teamOverview')}
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18" /></svg>
                     </h2>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2">{t('teamOverviewSubtitle')}</p>
+                </button>
+                <button
+                    onClick={() => setPage('vacation-planner')}
+                    className="p-6 bg-gradient-to-br from-white to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-purple-100 dark:ring-purple-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
+                >
+                    <h2 className="text-xl font-bold text-purple-600 dark:text-purple-400 flex items-center gap-2">
+                        {t('vacationPlanner')}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2v-6H3v6a2 2 0 002 2z" /></svg>
+                    </h2>
                 </button>
             </div>
 
@@ -111,7 +123,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
 
                 <div className="overflow-x-auto">
                     <div className="space-y-3 min-w-[300px]">
-                        {teamMembers.map(user => {
+                        {sortedTeamMembers.map(user => {
                             const loc = schedule[user.id]?.[dateString];
                             const isOff = loc === 'off' || loc === 'scheduled_off';
                             return (

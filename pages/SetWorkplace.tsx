@@ -15,7 +15,7 @@ const SetWorkplace: React.FC = () => {
 
     const today = new Date();
     const thisWeekStart = getStartOfWeek(today);
-    const maxFutureWeekStart = addWeeks(thisWeekStart, 4);
+    const maxFutureWeekStart = addWeeks(thisWeekStart, 13);
     const nextDisabled = getStartOfWeek(currentDate).getTime() >= maxFutureWeekStart.getTime();
 
     const handleLocationChange = (date: Date, locationId: LocationId) => {
