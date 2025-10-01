@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AppContext';
-import { getWeekNumber, getWorkdaysOfWeek, formatDate, addWeeks, subWeeks } from '../utils/dateUtils';
+import { getWeekNumber, getWorkdaysOfWeek, formatDate, addWeeks, subWeeks, getStartOfWeek } from '../utils/dateUtils';
 import { LOCATIONS } from '../constants/data';
 import { LocationId } from '../types';
 
@@ -12,6 +12,11 @@ const SetWorkplace: React.FC = () => {
 
     const workdays = getWorkdaysOfWeek(currentDate);
     const weekNum = getWeekNumber(currentDate, language);
+
+    const today = new Date();
+    const thisWeekStart = getStartOfWeek(today);
+    const maxFutureWeekStart = addWeeks(thisWeekStart, 4);
+    const nextDisabled = getStartOfWeek(currentDate).getTime() >= maxFutureWeekStart.getTime();
 
     const handleLocationChange = (date: Date, locationId: LocationId) => {
         if (user) {
@@ -53,7 +58,7 @@ const SetWorkplace: React.FC = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     </button>
                     <span className="font-semibold text-center w-24">{t('week')} {weekNum}</span>
-                    <button onClick={() => setCurrentDate(addWeeks(currentDate, 1))} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <button onClick={() => setCurrentDate(addWeeks(currentDate, 1))} disabled={nextDisabled} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </button>
                 </div>
@@ -84,7 +89,7 @@ const SetWorkplace: React.FC = () => {
                                     onChange={(e) => handleLocationChange(day, e.target.value as LocationId)}
                                     className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 focus:ring-blue-500 focus:border-blue-500"
                                 >
-                                    <option value="" disabled>Select location</option>
+                                    <option value="" disabled>{t('selectLocation')}</option>
                                     {LOCATIONS.map(loc => (
                                         <option key={loc.id} value={loc.id}>
                                             {t(loc.nameKey, 'locations')}

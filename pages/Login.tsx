@@ -38,10 +38,14 @@ const Login: React.FC = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
             <div className="max-w-md w-full bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                <div className="flex flex-col items-center space-y-4">
+                    <img src="/werkplekplanner.png" alt="Werkplek Planner" className="w-24 h-24 rounded-xl shadow-md" />
+                    <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
                         {t('loginTitle')}
                     </h2>
+                    <p className="text-center text-sm text-gray-600 dark:text-gray-300 max-w-sm">
+                        {t('loginSubtitle')}
+                    </p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="rounded-md shadow-sm -space-y-px">

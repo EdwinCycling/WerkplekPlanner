@@ -16,10 +16,10 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
     const displayDate = getRelativeDayName(currentDate, language, (key) => t(key));
 
     const today = startOfDay(new Date());
-    const startOfLastWeek = getStartOfWeek(subWeeks(today, 1));
+    const startOfThisWeek = getStartOfWeek(today);
     const endOfNextWeek = addDays(getStartOfWeek(addWeeks(today, 1)), 4);
 
-    const isPrevDisabled = startOfDay(subWorkday(currentDate)) < startOfDay(startOfLastWeek);
+    const isPrevDisabled = startOfDay(subWorkday(currentDate)) < startOfDay(startOfThisWeek);
     const isNextDisabled = startOfDay(addWorkday(currentDate)) > startOfDay(endOfNextWeek);
 
     const vacationingUsers = useMemo(() => {
@@ -75,17 +75,23 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <button
                     onClick={() => setPage('set-workplace')}
-                    className="p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg text-left hover:shadow-xl hover:scale-105 transition-all"
+                    className="p-8 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-blue-100 dark:ring-blue-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
                 >
-                    <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400">{t('setWorkplace')}</h2>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2">Werkplek voor komende week bijwerken.</p>
+                    <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                        {t('setWorkplace')}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" /></svg>
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-2">{t('setWorkplaceSubtitle')}</p>
                 </button>
                 <button
                     onClick={() => setPage('team-overview')}
-                    className="p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg text-left hover:shadow-xl hover:scale-105 transition-all"
+                    className="p-8 bg-gradient-to-br from-white to-green-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-green-100 dark:ring-green-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
                 >
-                    <h2 className="text-2xl font-bold text-green-600 dark:text-green-400">{t('teamOverview')}</h2>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2">Bekijk het weekschema voor het hele team.</p>
+                    <h2 className="text-2xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2">
+                        {t('teamOverview')}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18" /></svg>
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-2">{t('teamOverviewSubtitle')}</p>
                 </button>
             </div>
 
@@ -133,7 +139,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
                         <div className="space-y-2">
                             {upcomingOffDays.map(({ user, date }) => (
                                 <div key={user.id} className="flex items-center gap-3 p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                    {/* Removed emoji icon to comply with no-emojis policy */}
+                                    {/* Icon removed to comply with no-emojis policy */}
                                     <div className="flex-grow">
                                         <span className="font-medium text-gray-900 dark:text-gray-100">{getUserDisplayName(user)}</span>
                                         <p className="text-sm text-gray-600 dark:text-gray-400">{formatDate(date, 'PPPP', language)}</p>

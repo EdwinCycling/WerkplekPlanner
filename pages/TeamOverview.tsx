@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AppContext';
-import { getWeekNumber, getWorkdaysOfWeek, formatDate, addWeeks, subWeeks, getUserDisplayName } from '../utils/dateUtils';
+import { getWeekNumber, getWorkdaysOfWeek, formatDate, addWeeks, subWeeks, getUserDisplayName, getStartOfWeek } from '../utils/dateUtils';
 import LocationPill from '../components/LocationPill';
 
 const TeamOverview: React.FC = () => {
@@ -33,16 +33,21 @@ const TeamOverview: React.FC = () => {
         });
     };
 
+    const today = new Date();
+    const thisWeekStart = getStartOfWeek(today);
+    const prevDisabled = getStartOfWeek(currentDate).getTime() <= subWeeks(thisWeekStart, 1).getTime();
+    const nextDisabled = getStartOfWeek(currentDate).getTime() >= addWeeks(thisWeekStart, 1).getTime();
+
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
                 <h2 className="text-2xl font-bold">{t('teamOverviewTitle')}</h2>
                  <div className="flex items-center space-x-2">
-                    <button onClick={() => setCurrentDate(subWeeks(currentDate, 1))} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <button onClick={() => setCurrentDate(subWeeks(currentDate, 1))} disabled={prevDisabled} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     </button>
                     <span className="font-semibold text-center w-24">{t('week')} {weekNum}</span>
-                    <button onClick={() => setCurrentDate(addWeeks(currentDate, 1))} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <button onClick={() => setCurrentDate(addWeeks(currentDate, 1))} disabled={nextDisabled} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </button>
                 </div>
@@ -58,7 +63,7 @@ const TeamOverview: React.FC = () => {
                 <table className="w-full min-w-[700px] border-collapse">
                     <thead>
                         <tr className="bg-gray-50 dark:bg-gray-700/50">
-                            <th className="p-3 text-left font-semibold text-sm text-gray-700 dark:text-gray-300">Team Member</th>
+                            <th className="p-3 text-left font-semibold text-sm text-gray-700 dark:text-gray-300">{t('teamMember')}</th>
                             {workdays.map((day, index) => (
                                 <th key={index} className="p-3 text-center font-semibold text-sm text-gray-700 dark:text-gray-300">
                                     <div>{dayNames[index]}</div>
