@@ -10,6 +10,7 @@ Deze app helpt teams om werklocaties per werkdag vast te leggen (thuis, kantoor,
 - Firestore beveiligingsregels (alle gebruikers mogen lezen, alleen eigen data schrijven)
 - Minimale reads/writes en performance
 - Problemen oplossen
+- Wijzigingen (console opschonen, login limiet, UI teksten)
 
 ## Overzicht en architectuur
 - Frontend: React + Vite
@@ -45,7 +46,7 @@ Opmerking beveiliging: De Firebase client-config (apiKey, projectId etc.) in <mc
   - Voorbeeld velden: name: string, email: string
 - Collectie schedules: document per gebruiker, id = UID
   - Map van datum (YYYY-MM-DD) -> locatieId
-  - locatieId is één van: 'home' | 'delft' | 'eindhoven' | 'gent' | 'utrecht' | 'zwolle' | 'other' | 'off' | 'scheduled_off'
+  - locatieId is één van: 'home' | 'delft' | 'eindhoven' | 'gent' | 'utrecht' | 'zwolle' | 'other' | 'off' | 'scheduled_off' | 'event'
 
 Automatische aanmaak:
 - Bij eerste login wordt automatisch een minimaal profiel aangemaakt in users via <mcsymbol name="getUserProfile" filename="api.ts" path="c:\Users\Edwin\Documents\Apps\werkplek-planner\services\api.ts" startline="20" type="function"></mcsymbol>.
@@ -90,6 +91,31 @@ Let op: De client valideert extra dat alleen de eigen gebruiker schrijft, in <mc
 - Writes minimaliseren:
   - Bij wijzigen van één dag wordt slechts één veld geschreven met setDoc(..., { merge: true }).
   - Documenten worden niet hard gecreëerd: merges zorgen voor automatische aanmaak zonder extra writes.
+
+## UI teksten (Login)
+- Titel (NL/EN): `Werkplek planner`
+- Subtitel (NL): `Log in om je teamplanning te beheren.`
+- Subtitle (EN): `Sign in to manage your team planning.`
+
+Deze worden aangestuurd via <mcfile name="translations.ts" path="c:\Users\Edwin\Documents\Apps\werkplek-planner\utils\translations.ts"></mcfile> en gebruikt in <mcfile name="Login.tsx" path="c:\Users\Edwin\Documents\Apps\werkplek-planner\pages\Login.tsx"></mcfile>.
+
+## Console opschonen
+- Verwijderd: `console.log` en `console.error` in clientcode (context, hook, api).
+- Fouten blijven zichtbaar in de UI (alerts/meldingen), maar niet in de browserconsole.
+
+Bestanden:
+- <mcfile name="AppContext.tsx" path="c:\Users\Edwin\Documents\Apps\werkplek-planner\contexts\AppContext.tsx"></mcfile>
+- <mcfile name="useLocalStorage.ts" path="c:\Users\Edwin\Documents\Apps\werkplek-planner\hooks\useLocalStorage.ts"></mcfile>
+- <mcfile name="api.ts" path="c:\Users\Edwin\Documents\Apps\werkplek-planner\services\api.ts"></mcfile>
+
+## Beveiliging: limiet op foutieve logins (per sessie)
+- Per sessie maximaal 5 mislukte inlogpogingen; daarna wordt de login tijdelijk geblokkeerd en toont de app een duidelijke melding.
+- Implementatie: `sessionStorage` met sleutel `login_failed_count` in <mcfile name="Login.tsx" path="c:\Users\Edwin\Documents\Apps\werkplek-planner\pages\Login.tsx"></mcfile>.
+- Meldingstekst:
+  - NL: `Te veel mislukte inlogpogingen. Probeer het later opnieuw.`
+  - EN: `Too many failed login attempts. Please try again later.`
+
+Opmerking: Dit is een client-side bescherming om bruteforce te beperken op het formulier. Server-side (Firebase Auth) hanteert ook eigen rate limits.
 
 ## Problemen oplossen
 - Geen data zichtbaar: log in met een bestaande Firebase gebruiker. Zonder data toont de app vakantiedagen client-side, maar voor echte data moeten users/schedules bestaan.

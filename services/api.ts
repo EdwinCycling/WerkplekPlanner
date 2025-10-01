@@ -3,6 +3,8 @@ import {
     signOut,
     onAuthStateChanged as _onAuthStateChanged,
     type User as FirebaseUser,
+    sendPasswordResetEmail,
+    updatePassword,
 } from 'firebase/auth';
 import {
     doc,
@@ -78,8 +80,6 @@ export const fetchTeamMembers = async (): Promise<User[]> => {
 
 
 export const fetchSchedule = async (teamMembers: User[]): Promise<Schedule> => {
-    console.log("Fetching schedule from Firestore...");
-
     // Minimize reads: perform one getDoc per team member (avoids reading unrelated docs)
     const schedulePromises = teamMembers.map(async (member) => {
         const scheduleDocRef = doc(db, 'schedules', member.id);
@@ -122,7 +122,7 @@ export const updateScheduleEntry = async (userId: string, date: string, location
         throw new Error(`Invalid date format: ${date}`);
     }
 
-    const allowed: LocationId[] = ['home', 'delft', 'eindhoven', 'gent', 'utrecht', 'zwolle', 'other', 'off', 'scheduled_off'];
+    const allowed: LocationId[] = ['home', 'delft', 'eindhoven', 'gent', 'utrecht', 'zwolle', 'other', 'off', 'scheduled_off', 'event'];
     if (!allowed.includes(locationId)) {
         throw new Error(`Invalid locationId: ${locationId}`);
     }
@@ -133,9 +133,28 @@ export const updateScheduleEntry = async (userId: string, date: string, location
         throw new Error('Unauthorized write: users may only update their own schedule');
     }
 
-    console.log(`Updating Firestore for ${userId} on ${date} to ${locationId}`);
     const scheduleDocRef = doc(db, 'schedules', userId);
 
     // Single write that also auto-creates the document if it doesn't exist
     await setDoc(scheduleDocRef, { [date]: locationId }, { merge: true });
+};
+
+// --- Password Functions ---
+
+export const resetPassword = async (email: string): Promise<void> => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        throw new Error('Error: Invalid email address');
+    }
+    await sendPasswordResetEmail(auth, email);
+};
+
+export const changePassword = async (newPassword: string): Promise<void> => {
+    if (typeof newPassword !== 'string' || newPassword.length < 8) {
+        throw new Error('Error: Password must be at least 8 characters');
+    }
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+        throw new Error('Error: Not authenticated');
+    }
+    await updatePassword(currentUser, newPassword);
 };

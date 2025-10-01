@@ -111,14 +111,25 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
 
                 <div className="overflow-x-auto">
                     <div className="space-y-3 min-w-[300px]">
-                        {teamMembers.map(user => (
-                            <div key={user.id} className="grid grid-cols-2 gap-4 items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-                                <span className="font-medium truncate text-gray-900 dark:text-gray-100">{getUserDisplayName(user)}</span>
-                                <div className="text-right">
-                                    <LocationPill locationId={schedule[user.id]?.[dateString]} />
+                        {teamMembers.map(user => {
+                            const loc = schedule[user.id]?.[dateString];
+                            const isOff = loc === 'off' || loc === 'scheduled_off';
+                            return (
+                                <div key={user.id} className={`grid grid-cols-2 gap-4 items-center p-3 rounded-lg ${isOff ? 'bg-green-100 dark:bg-green-900/30' : 'bg-gray-50 dark:bg-gray-700/50'}`}>
+                                    <span className="font-medium truncate text-gray-900 dark:text-gray-100">
+                                        {getUserDisplayName(user)}
+                                        {isOff && (
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="inline h-4 w-4 text-yellow-500 ml-1 align-middle" fill="currentColor" aria-hidden="true">
+                                                <path d="M12 18a6 6 0 100-12 6 6 0 000 12z" />
+                                            </svg>
+                                        )}
+                                    </span>
+                                    <div className="text-right">
+                                        <LocationPill locationId={loc} />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
                  {vacationingUsers.length > 0 && (
@@ -135,11 +146,18 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
                 )}
                 {upcomingOffDays.length > 0 && (
                     <div className="mt-6 border-t pt-4 border-gray-200 dark:border-gray-700">
-                        <h3 className="font-semibold mb-2">{t('upcomingOffDays')}</h3>
+                        <h3 className="font-semibold mb-2 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5 text-yellow-500" fill="currentColor">
+                                <path d="M12 18a6 6 0 100-12 6 6 0 000 12zm0-16a1 1 0 011 1v2a1 1 0 01-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 01-2 0v-2a1 1 0 011-1zM3 11a1 1 0 011-1h2a1 1 0 110 2H4a1 1 0 01-1-1zm16 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM5.636 5.636a1 1 0 011.414 0L9 7.586a1 1 0 11-1.414 1.414L5.636 7.05a1 1 0 010-1.414zm9.95 9.95a1 1 0 011.414 0L19.364 19a1 1 0 01-1.414 1.414l-2.364-2.364a1 1 0 010-1.414zM5.636 18.364a1 1 0 010-1.414L8 14.586A1 1 0 119.414 16L7.05 18.364a1 1 0 01-1.414 0zm9.95-12.728a1 1 0 010-1.414L18.364 2.95A1 1 0 0119.778 4.364L17.414 6.728a1 1 0 01-1.414 0z" />
+                            </svg>
+                            {t('upcomingOffDays')}
+                        </h3>
                         <div className="space-y-2">
                             {upcomingOffDays.map(({ user, date }) => (
-                                <div key={user.id} className="flex items-center gap-3 p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                    {/* Icon removed to comply with no-emojis policy */}
+                                <div key={user.id} className="flex items-center gap-3 p-2 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-gray-700/50 dark:to-gray-700/30 rounded-lg border border-yellow-100 dark:border-gray-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6 text-yellow-500 flex-shrink-0" fill="currentColor">
+                                        <path d="M12 18a6 6 0 100-12 6 6 0 000 12z" />
+                                    </svg>
                                     <div className="flex-grow">
                                         <span className="font-medium text-gray-900 dark:text-gray-100">{getUserDisplayName(user)}</span>
                                         <p className="text-sm text-gray-600 dark:text-gray-400">{formatDate(date, 'PPPP', language)}</p>

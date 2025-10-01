@@ -13,6 +13,8 @@ interface AppContextType {
     isLoading: boolean;
     login: (email: string, pass: string) => Promise<User>;
     logout: () => Promise<void>;
+    resetPassword: (email: string) => Promise<void>;
+    changePassword: (newPassword: string) => Promise<void>;
     theme: Theme;
     setTheme: (theme: Theme) => void;
     language: Language;
@@ -41,7 +43,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             const initialSchedule = await api.fetchSchedule(members);
             setSchedule(initialSchedule);
         } catch (error) {
-            console.error("Error: failed to refresh data", error);
         } finally {
             setIsLoading(false);
         }
@@ -92,9 +93,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             // Update the backend
             await api.updateScheduleEntry(userId, date, locationId);
         } catch (error) {
-            console.error("Failed to update schedule:", error);
-            // In a real app, you would revert the optimistic update here.
-            // For simplicity, we'll log the error. You might show a toast notification.
         }
     };
 
@@ -104,6 +102,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         isLoading,
         login: api.login, 
         logout: api.logout, 
+        resetPassword: api.resetPassword,
+        changePassword: api.changePassword,
         theme, 
         setTheme, 
         language, 

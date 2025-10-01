@@ -14,7 +14,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const Header: React.FC<HeaderProps> = ({ setPage }) => {
-    const { user, logout, theme, setTheme, language, setLanguage, t, refreshData } = useAuth();
+    const { user, logout, theme, setTheme, language, setLanguage, t, refreshData, changePassword } = useAuth();
 
     const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
     // remove obsolete toggleLanguage definition – flags now handle language selection
@@ -24,6 +24,11 @@ const Header: React.FC<HeaderProps> = ({ setPage }) => {
     const [bannerDismissed, setBannerDismissed] = useLocalStorage<boolean>('pwa-banner-dismissed', false);
     const [showMobileGuide, setShowMobileGuide] = React.useState(false);
     const [isStandalone, setIsStandalone] = React.useState(false);
+    const [showChangePassword, setShowChangePassword] = React.useState(false);
+    const [newPassword, setNewPassword] = React.useState('');
+    const [passwordStatus, setPasswordStatus] = React.useState<string>('');
+    const [changeLoading, setChangeLoading] = React.useState(false);
+    const [confirmPassword, setConfirmPassword] = React.useState('');
 
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
     const isInstalled = React.useMemo(() => isStandalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches), [isStandalone]);
@@ -78,16 +83,59 @@ const Header: React.FC<HeaderProps> = ({ setPage }) => {
         setShowMobileGuide(false);
     };
 
+    const computeStrength = (pwd: string): 'weak' | 'medium' | 'strong' => {
+        let score = 0;
+        if (pwd.length >= 8) score++;
+        if (/[A-Z]/.test(pwd)) score++;
+        if (/[0-9]/.test(pwd)) score++;
+        if (/[^A-Za-z0-9]/.test(pwd)) score++;
+        if (score <= 1) return 'weak';
+        if (score === 2 || score === 3) return 'medium';
+        return 'strong';
+    };
+
+    const onPasswordChange = (val: string) => {
+        setNewPassword(val);
+        const s = computeStrength(val);
+        setPasswordStatus(t(s));
+    };
+
+    const handleChangePassword = async () => {
+        setChangeLoading(true);
+        setPasswordStatus('');
+        try {
+            if (newPassword.length < 8) {
+                setPasswordStatus(t('passwordTooShort'));
+                setChangeLoading(false);
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                setPasswordStatus(t('passwordsDoNotMatch'));
+                setChangeLoading(false);
+                return;
+            }
+            await changePassword(newPassword);
+            setPasswordStatus(t('passwordUpdated'));
+            setNewPassword('');
+            setConfirmPassword('');
+            setShowChangePassword(false);
+        } catch (e) {
+            setPasswordStatus(t('passwordUpdateError'));
+        } finally {
+            setChangeLoading(false);
+        }
+    };
+
     return (
         <header className="bg-white dark:bg-gray-800 shadow-md p-4 sticky top-0 z-10">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <img src="/werkplekplanner.png" alt="Werkplek Planner" className="h-8 w-8 rounded" />
-                    <h1 className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400 cursor-pointer" onClick={() => setPage('dashboard')}>
+            <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <img src="/werkplekplanner.png" alt="Werkplek Planner" className="h-8 w-8 rounded flex-shrink-0" />
+                    <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400 cursor-pointer truncate" onClick={() => setPage('dashboard')}>
                         Werkplek Planner
                     </h1>
                 </div>
-                <div className="flex items-center space-x-2 sm:space-x-4">
+                <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
                     {user && <span className="hidden sm:inline text-sm text-gray-600 dark:text-gray-300">{t('welcomeMessage')} {getUserDisplayName(user)}</span>}
                     <button onClick={() => setPage('dashboard')} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label={t('home')}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-200" viewBox="0 0 20 20" fill="currentColor">
@@ -132,21 +180,32 @@ const Header: React.FC<HeaderProps> = ({ setPage }) => {
                         </button>
                     </div>
                     {user && (
+                        <button onClick={() => setShowChangePassword(true)} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label={t('changePasswordTitle')} title={t('changePasswordTitle')}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 1v4" />
+                                <path d="M12 19v4" />
+                                <path d="M5.22 5.22l2.83 2.83" />
+                                <path d="M15.95 15.95l2.83 2.83" />
+                                <circle cx="12" cy="12" r="6" />
+                            </svg>
+                        </button>
+                    )}
+                    {user && (
                         <button onClick={logout} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label="Logout">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-200" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M3 4a1 1 0 011-1h6a1 1 0 110 2H5v10h5a1 1 0 110 2H4a1 1 0 01-1-1V4zm11.293 5.293a1 1 0 011.414 1.414L14.414 12H10a1 1 0 110-2h4.414l-.707-.707z" />
                             </svg>
                         </button>
                     )}
+                    <button onClick={() => refreshData()} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label={t('refresh')} title={t('refresh')}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M23 4v6h-6" />
+                            <path d="M1 20v-6h6" />
+                            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10" />
+                            <path d="M20.49 15a9 9 0 01-14.85 3.36L1 14" />
+                        </svg>
+                    </button>
                 </div>
-                <button onClick={() => refreshData()} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label={t('refresh')} title={t('refresh')}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M23 4v6h-6" />
-                        <path d="M1 20v-6h6" />
-                        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10" />
-                        <path d="M20.49 15a9 9 0 01-14.85 3.36L1 14" />
-                    </svg>
-                </button>
             </div>
 
             {shouldShowBanner && (
@@ -174,6 +233,45 @@ const Header: React.FC<HeaderProps> = ({ setPage }) => {
                             {t('close')}
                         </button>
                     </div>
+                </div>
+            )}
+            {showChangePassword && (
+                <div className="mt-2 p-4 bg-white dark:bg-gray-700 rounded-md shadow-lg">
+                    <div className="font-semibold mb-2">{t('changePasswordTitle')}</div>
+                    <div className="space-y-2">
+                        <input
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => onPasswordChange(e.target.value)}
+                            placeholder={t('newPasswordLabel')}
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                        />
+                        <input
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder={t('confirmNewPasswordLabel')}
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                        />
+                        {confirmPassword && newPassword !== confirmPassword && (
+                            <div className="text-sm text-red-600">{t('passwordsDoNotMatch')}</div>
+                        )}
+                        <div className="text-sm">
+                            <span className="font-medium">{t('passwordStrength')}: </span>
+                            <span className={`${newPassword.length >= 8 ? (computeStrength(newPassword) === 'strong' ? 'text-green-600' : computeStrength(newPassword) === 'medium' ? 'text-yellow-600' : 'text-red-600') : 'text-red-600'}`}>{passwordStatus}</span>
+                        </div>
+                    </div>
+                    <div className="flex justify-end gap-2 mt-3">
+                        <button onClick={() => setShowChangePassword(false)} className="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100">
+                            {t('dismiss')}
+                        </button>
+                        <button onClick={handleChangePassword} disabled={changeLoading} className="px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400">
+                            {t('savePasswordButton')}
+                        </button>
+                    </div>
+                    {passwordStatus && (
+                        <div className="mt-2 text-sm">{passwordStatus}</div>
+                    )}
                 </div>
             )}
         </header>
