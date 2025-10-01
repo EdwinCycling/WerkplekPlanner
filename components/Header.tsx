@@ -4,7 +4,7 @@ import { getUserDisplayName } from '../utils/dateUtils';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 interface HeaderProps {
-    setPage: (page: 'dashboard' | 'set-workplace' | 'team-overview' | 'vacation-planner') => void;
+    setPage: (page: 'dashboard' | 'set-workplace' | 'team-overview' | 'vacation-planner' | 'insights') => void;
 }
 
 // Minimal type to handle the install prompt event
@@ -198,150 +198,111 @@ const Header: React.FC<HeaderProps> = ({ setPage }) => {
                                 <polygon points="60,0 56.5,0 0,26.5 0,36 3.5,36 60,9.5" fill="#C8102E"/>
                                 <rect x="0" y="14" width="60" height="8" fill="#FFFFFF"/>
                                 <rect x="26" y="0" width="8" height="36" fill="#FFFFFF"/>
-                                <rect x="0" y="16" width="60" height="4" fill="#C8102E"/>
-                                <rect x="28" y="0" width="4" height="36" fill="#C8102E"/>
+                                <rect x="0" y="15" width="60" height="6" fill="#C8102E"/>
+                                <rect x="27" y="0" width="6" height="36" fill="#C8102E"/>
                             </svg>
                         </button>
                         <button
                             onClick={() => setLanguage('nl')}
                             className={`p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${language === 'nl' ? 'ring-2 ring-blue-500' : ''}`}
-                            aria-label="Set language to Dutch"
+                            aria-label="Stel taal in op Nederlands"
                             title="Nederlands"
                         >
                             <svg viewBox="0 0 60 36" className="h-5 w-8" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="60" height="36" fill="#ffffff" stroke="#cbd5e1"/>
-                                <rect width="60" height="12" fill="#dc2626"/>
-                                <rect y="24" width="60" height="12" fill="#1d4ed8"/>
+                                <rect width="60" height="12" y="0" fill="#AE1C28"/>
+                                <rect width="60" height="12" y="12" fill="#FFFFFF"/>
+                                <rect width="60" height="12" y="24" fill="#21468B"/>
                             </svg>
                         </button>
                     </div>
-                    {user && (
-                        <button onClick={() => setShowChangePassword(true)} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label={t('changePasswordTitle')} title={t('changePasswordTitle')}>
-                            {/* Key icon for change password */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="7" cy="12" r="3" />
-                                <path d="M10 12h11" />
-                                <path d="M21 12v4" />
-                                <path d="M17 12v4" />
-                            </svg>
-                        </button>
-                    )}
-                    {user && (
-                        <button onClick={logout} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ml-2" aria-label="Logout" title="Logout">
-                            {/* Door with arrow icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M3 3h12v18H3z" />
-                                <path d="M13 12h8" />
-                                <path d="M17 8l4 4-4 4" />
-                            </svg>
-                        </button>
-                    )}
 
+                    <div className="relative">
+                        <button onClick={() => setShowChangePassword(true)} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label={t('changePasswordTitle')}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 1a4 4 0 00-4 4v3H7a2 2 0 00-2 2v9a2 2 0 002 2h10a2 2 0 002-2v-9a2 2 0 00-2-2h-1V5a4 4 0 00-4-4z" />
+                                <path d="M8 11h8" />
+                            </svg>
+                        </button>
+                        {user && (
+                            <button onClick={logout} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label="Log out">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M10 17l5-5-5-5" />
+                                    <path d="M3 12h12" />
+                                    <path d="M21 19V5a2 2 0 00-2-2h-5" />
+                                </svg>
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 
+            {/* Install banner */}
             {shouldShowBanner && (
-                <div className="mt-3 px-3 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-md flex items-center justify-between gap-2 text-sm whitespace-nowrap overflow-x-auto">
-                    <span className="truncate">
-                        {isIOS ? t('pwaMobileMessage') : t('pwaInstallMessage')}
-                    </span>
-                    <div className="flex items-center gap-2">
-                        <button onClick={handleInstallClick} className="px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">
-                            {isIOS ? t('pwaMobileInstructionsTitle') : t('pwaInstallButton')}
-                        </button>
-                        <button onClick={handleDismiss} className="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
-                            {t('dismiss')}
-                        </button>
+                <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/40 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm text-blue-800 dark:text-blue-100">
+                            {t('pwaInstallMessage')}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button onClick={handleInstallClick} className="px-3 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700">
+                                {t('pwaInstallButton')}
+                            </button>
+                            <button onClick={handleDismiss} className="px-3 py-1 text-sm rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">
+                                {t('dismiss')}
+                            </button>
+                        </div>
                     </div>
+                    {showMobileGuide && (
+                        <div className="mt-2 text-xs text-blue-900 dark:text-blue-100">
+                            <h4 className="font-semibold">{t('pwaMobileInstructionsTitle')}</h4>
+                            <p>{t('pwaMobileInstructionsText')}</p>
+                        </div>
+                    )}
                 </div>
             )}
 
-            {showMobileGuide && (
-                <div className="mt-2 p-3 bg-white dark:bg-gray-700 rounded-md shadow-lg text-sm">
-                    <div className="font-semibold mb-1">{t('pwaMobileInstructionsTitle')}</div>
-                    <div className="text-gray-700 dark:text-gray-300">{t('pwaMobileInstructionsText')}</div>
-                    <div className="text-right mt-2">
-                        <button onClick={() => setShowMobileGuide(false)} className="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100">
-                            {t('close')}
-                        </button>
+            {/* Change Password Modal */}
+            {showChangePassword && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-sm">
+                        <h3 className="text-lg font-bold mb-4">{t('changePasswordTitle')}</h3>
+                        <div className="space-y-3">
+                            <div>
+                                <label className="block text-sm mb-1">{t('newPasswordLabel')}</label>
+                                <input
+                                    type="password"
+                                    value={newPassword}
+                                    onChange={(e) => onPasswordChange(e.target.value)}
+                                    className="w-full p-2 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+                                />
+                                {passwordStatus && (
+                                    <p className="text-xs mt-1">{t('passwordStrength')}: {passwordStatus}</p>
+                                )}
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1">{t('confirmNewPasswordLabel')}</label>
+                                <input
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="w-full p-2 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <button onClick={() => setShowChangePassword(false)} className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">
+                                    {t('close')}
+                                </button>
+                                <button onClick={handleChangePassword} disabled={changeLoading} className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
+                                    {t('savePasswordButton')}
+                                </button>
+                            </div>
+                            {passwordStatus && (
+                                <p className="text-xs text-red-600 dark:text-red-400">{passwordStatus}</p>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
-            {showChangePassword && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center">
-                    {/* Overlay */}
-                    <div
-                      className="absolute inset-0 bg-black/50"
-                      onClick={() => setShowChangePassword(false)}
-                      aria-hidden="true"
-                    />
-                    {/* Modal */}
-                    <div
-                      role="dialog"
-                      aria-modal="true"
-                      aria-labelledby="changePasswordTitle"
-                      className="relative z-10 w-full max-w-md mx-4 rounded-lg bg-white dark:bg-gray-800 shadow-xl"
-                    >
-                      {/* Header */}
-                      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                        <h2 id="changePasswordTitle" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                          {t('changePasswordTitle')}
-                        </h2>
-                        <button
-                          onClick={() => setShowChangePassword(false)}
-                          className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-                          aria-label={t('dismiss')}
-                          title={t('dismiss')}
-                        >
-                          {/* Close (X) icon */}
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 dark:text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M6 6l12 12" />
-                            <path d="M6 18L18 6" />
-                          </svg>
-                        </button>
-                      </div>
-                
-                      {/* Body */}
-                      <div className="px-4 py-3 space-y-2">
-                        <input
-                          type="password"
-                          value={newPassword}
-                          onChange={(e) => onPasswordChange(e.target.value)}
-                          placeholder={t('newPasswordLabel')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                        />
-                        <input
-                          type="password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          placeholder={t('confirmNewPasswordLabel')}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                        />
-                        {confirmPassword && newPassword !== confirmPassword && (
-                          <div className="text-sm text-red-600">{t('passwordsDoNotMatch')}</div>
-                        )}
-                        <div className="text-sm">
-                          <span className="font-medium">{t('passwordStrength')}: </span>
-                          <span className={`${newPassword.length >= 8 ? (computeStrength(newPassword) === 'strong' ? 'text-green-600' : computeStrength(newPassword) === 'medium' ? 'text-yellow-600' : 'text-red-600') : 'text-red-600'}`}>{passwordStatus}</span>
-                        </div>
-                      </div>
-                
-                      {/* Footer */}
-                      <div className="flex justify-end gap-2 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-                        <button onClick={() => setShowChangePassword(false)} className="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100">
-                          {t('dismiss')}
-                        </button>
-                        <button onClick={handleChangePassword} disabled={changeLoading} className="px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400">
-                          {t('savePasswordButton')}
-                        </button>
-                      </div>
-                
-                      {passwordStatus && (
-                        <div className="px-4 pb-3 text-sm">{passwordStatus}</div>
-                      )}
-                    </div>
-                  </div>
-              )}
         </header>
     );
 };

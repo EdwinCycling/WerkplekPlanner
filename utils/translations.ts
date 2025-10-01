@@ -91,6 +91,12 @@ export const translations = {
         vacationPlannerSubtitle: "Plan time off in a monthly calendar",
         previousMonth: "Previous Month",
         nextMonth: "Next Month",
+        popularLocationsTitle: "Popular locations",
+        monthlyVacationTitle: "Monthly vacation distribution",
+        topVacationDaysTitle: "Top 10 vacation days (most team members off)",
+        popularWfhTitle: "Popular work-from-home days",
+        noDataAvailable: "No data available",
+        insights: "Insights",
     },
     nl: {
         loginSubtitle: "Log in om je teamplanning te beheren.",
@@ -150,7 +156,7 @@ export const translations = {
             zwolle: "Zwolle",
             other: "Andere locatie",
             off: "Vrij",
-            scheduled_off: "Roostervij",
+            scheduled_off: "Roostervrij",
             event: "Event/beurs/training",
             holiday: "Feestdag"
         },
@@ -178,5 +184,11 @@ export const translations = {
         vacationPlannerSubtitle: "Plan vrije dagen in een maandkalender",
         previousMonth: "Vorige maand",
         nextMonth: "Volgende maand",
+        popularLocationsTitle: "Populaire locaties",
+        monthlyVacationTitle: "Vakantie verdeling per maand",
+        topVacationDaysTitle: "Top 10 vakantiedagen (meeste teamleden vrij)",
+        popularWfhTitle: "Populaire thuiswerkdagen",
+        noDataAvailable: "Geen gegevens beschikbaar",
+        insights: "Inzichten",
     },
 };

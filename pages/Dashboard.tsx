@@ -5,7 +5,7 @@ import { User } from '../types';
 import { formatDate, addWorkday, subWorkday, getUserDisplayName, getRelativeDayName, getStartOfWeek, subWeeks, addWeeks, addDays, getWorkdaysOfWeek, startOfDay, getDutchHolidays } from '../utils/dateUtils';
 
 interface DashboardProps {
-    setPage: (page: 'dashboard' | 'set-workplace' | 'team-overview' | 'vacation-planner') => void;
+    setPage: (page: 'dashboard' | 'set-workplace' | 'team-overview' | 'vacation-planner' | 'insights') => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
@@ -77,7 +77,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
 
     return (
         <div className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <button
                     onClick={() => setPage('set-workplace')}
                     className="p-6 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-blue-100 dark:ring-blue-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
@@ -103,6 +103,15 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
                     <h2 className="text-xl font-bold text-purple-600 dark:text-purple-400 flex items-center gap-2">
                         {t('vacationPlanner')}
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2v-6H3v6a2 2 0 002 2z" /></svg>
+                    </h2>
+                </button>
+                <button
+                    onClick={() => setPage('insights')}
+                    className="p-6 bg-gradient-to-br from-white to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-lg ring-1 ring-indigo-100 dark:ring-indigo-900/30 text-left hover:shadow-xl hover:scale-105 transition-all"
+                >
+                    <h2 className="text-xl font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                        {t('insights')}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3v18h18M7 15l4-4 3 3 4-6" /></svg>
                     </h2>
                 </button>
             </div>
@@ -160,7 +169,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setPage }) => {
                     <div className="mt-6 border-t pt-4 border-gray-200 dark:border-gray-700">
                         <h3 className="font-semibold mb-2 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5 text-yellow-500" fill="currentColor">
-                                <path d="M12 18a6 6 0 100-12 6 6 0 000 12zm0-16a1 1 0 011 1v2a1 1 0 01-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 01-2 0v-2a1 1 0 011-1zM3 11a1 1 0 011-1h2a1 1 0 110 2H4a1 1 0 01-1-1zm16 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM5.636 5.636a1 1 0 011.414 0L9 7.586a1 1 0 11-1.414 1.414L5.636 7.05a1 1 0 010-1.414zm9.95 9.95a1 1 0 011.414 0L19.364 19a1 1 0 01-1.414 1.414l-2.364-2.364a1 1 0 010-1.414zM5.636 18.364a1 1 0 010-1.414L8 14.586A1 1 0 119.414 16L7.05 18.364a1 1 0 01-1.414 0zm9.95-12.728a1 1 0 010-1.414L18.364 2.95A1 1 0 0119.778 4.364L17.414 6.728a1 1 0 01-1.414 0z" />
+                                <path d="M12 18a6 6 0 100-12 6 6 0 000 12z" />
                             </svg>
                             {t('upcomingOffDays')}
                         </h3>
