@@ -2,9 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
-# SPA fallback: serve index.html for all routes
+# SPA fallback: serve index.html for all client-side routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
+# NOTE: do not force rewrite, so static assets like /assets/*.js are served with correct MIME types
