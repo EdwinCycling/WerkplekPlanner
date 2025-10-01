@@ -1,0 +1,5 @@
+{
+  "name": "Werkplek Planner",
+  "description": "Een app voor teams om werklocaties te plannen en te bekijken. Gebruikers kunnen per dag aangeven waar ze werken (thuis, kantoor, of vrij) en een overzicht van het hele team bekijken.",
+  "requestFramePermissions": []
+}
